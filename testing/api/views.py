@@ -26,9 +26,10 @@ class ProductViewSet(ModelViewSet):
             return ProductSerializer
         return ProductCreateSerializer
 
+
     def create(self, request, *args):
         serializer = ProductCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         convert(request.data['image'])
-        return Response(serializer.data)
+

@@ -10,7 +10,9 @@ class ImageSerializer(serializers.Serializer):
 
     def get_path(self, obj):
         path = obj.name.split('.')[0]
+
         return 'media/' + path
+
 
     def get_format(self, obj):
         formats = obj.name.split('.')[1:]
@@ -27,7 +29,6 @@ class ProductSerializer(serializers.Serializer):
 
 
 class ProductCreateSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Product
         fields = (
@@ -35,5 +36,5 @@ class ProductCreateSerializer(serializers.ModelSerializer):
             'vendor_code',
             'price',
             'status',
-            'image'
-        )
+            'image')
+            
