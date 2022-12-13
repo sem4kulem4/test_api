@@ -1,46 +1,35 @@
 from rest_framework.viewsets import ModelViewSet
-from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 from rest_framework.response import Response
 from PIL import Image
 
 from .serializers import ProductSerializer, ProductCreateSerializer
 from .models import Product
 
+
 def convert(image):
     im = Image.open(image).convert('RGB')
-    im.save(f'{image}.webp', 'webp', optimize = True, quality = 10)
-    print(im)
+    im.save(f'media/images/{image.name}.webp', 'webp', optimize = True, quality = 10)
     return im
 
-# class ProductViewSet(ViewSet):
-#     def create(self, data):
-#         pass
-#     def perform_create(self, serializer):
-#         print(serializer)
-#
-#
-#     def list(self, request):
-#         queryset = Product.objects.all()
-#         serializer = ProductSerializer(queryset, many=True)
-#         return Response(serializer.data)
-#
-#     def retrieve(self, request, pk=None):
-#         item = get_object_or_404(Product, pk=pk)
-#         serializer = ProductSerializer(item)
-#         return Response(serializer.data)
 
 class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
-    http_method_names = ('get', 'post')
+    http_method_names = ['get', 'post']
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filterset_fields = ('status',)
+    search_fields = ('name', 'vendor_code')
 
     def get_serializer_class(self):
-        if self.action in ('retrieve', 'list'):
+        if self.action in ('list', 'retrieve'):
             return ProductSerializer
         return ProductCreateSerializer
 
-    def create(self, request, *args, **kwargs):
+
+    def create(self, request, *args):
         serializer = ProductCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        image = convert(request.data['image'])
-        return Response(serializer.data)
+        convert(request.data['image'])
+

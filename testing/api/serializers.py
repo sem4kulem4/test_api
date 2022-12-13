@@ -4,19 +4,15 @@ from PIL import Image
 from .models import Product
 
 
-def convert(image):
-    im = Image.open(image).convert('RGB')
-    im.save('', 'webp', optimize=True, quality=10)
-    return im
-
-
 class ImageSerializer(serializers.Serializer):
     path = serializers.SerializerMethodField()
     format = serializers.SerializerMethodField()
 
     def get_path(self, obj):
         path = obj.name.split('.')[0]
-        return path
+
+        return 'media/' + path
+
 
     def get_format(self, obj):
         formats = obj.name.split('.')[1:]
@@ -40,5 +36,5 @@ class ProductCreateSerializer(serializers.ModelSerializer):
             'vendor_code',
             'price',
             'status',
-            'image'
-        )
+            'image')
+            
