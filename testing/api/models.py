@@ -11,7 +11,7 @@ STATUS = (
 
 class Product(models.Model):
     name = models.CharField(max_length=250)
-    vendor_code = models.CharField(max_length=150)
+    vendor_code = models.CharField(max_length=150, unique=True)
     price = models.PositiveIntegerField()
     status = models.CharField(
         max_length=50,
